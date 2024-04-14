@@ -15,8 +15,8 @@ public class UserEntity : IdentityUser
     public DateTime? Created {  get; set; }
     public DateTime? Updated { get; set;}
 
-    public ICollection<MessageEntity>? SentMessages { get; set; }
-    public ICollection<MessageEntity>? RecievedMessages { get; set; }
+    public ICollection<MessageEntity>? MessageSenders { get; set; }
+    public ICollection<MessageEntity>? MessageRecievers { get; set; }
     public ICollection<FriendEntity>? Friends { get; set;}
     public ICollection<AddressEntity>? Addresses { get; set; }
 }
