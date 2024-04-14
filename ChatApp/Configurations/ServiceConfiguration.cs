@@ -1,5 +1,12 @@
-﻿namespace ChatApp.Configurations;
+﻿using Chat_Alot_Library.DbContext;
+using Microsoft.EntityFrameworkCore;
 
-public class ServiceConfiguration
+namespace ChatApp.Configurations;
+
+public static class ServiceConfiguration
 {
+    public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<DataContext>(x => x.UseSqlServer(configuration.GetConnectionString("SqlServer")));
+    }
 }
