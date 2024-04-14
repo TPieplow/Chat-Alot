@@ -1,6 +1,9 @@
-var builder = WebApplication.CreateBuilder(args);
+using ChatApp.Configurations;
 
+var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
+builder.Services.RegisterDbContext(builder.Configuration);
 
 var app = builder.Build();
 
