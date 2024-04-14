@@ -1,5 +1,0 @@
-C:\Projects\chat_application\Chat_Alot_Library\Chat_Alot_Library\obj\Debug\net8.0\Chat_Alot_Library.csproj.AssemblyReference.cache
-C:\Projects\chat_application\Chat_Alot_Library\Chat_Alot_Library\obj\Debug\net8.0\Chat_Alot_Library.GeneratedMSBuildEditorConfig.editorconfig
-C:\Projects\chat_application\Chat_Alot_Library\Chat_Alot_Library\obj\Debug\net8.0\Chat_Alot_Library.AssemblyInfoInputs.cache
-C:\Projects\chat_application\Chat_Alot_Library\Chat_Alot_Library\obj\Debug\net8.0\Chat_Alot_Library.AssemblyInfo.cs
-C:\Projects\chat_application\Chat_Alot_Library\Chat_Alot_Library\obj\Debug\net8.0\Chat_Alot_Library.csproj.CoreCompileInputs.cache
