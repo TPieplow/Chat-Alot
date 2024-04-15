@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Chat_Alot_Library.Entities;
 
 public class AddressEntity
 {
+    [Key]
     public int Id { get; set; }
     public string AddressLine1 { get; set; } = null!;
     public string AddressLine2 { get; set; } = null!;

@@ -190,8 +190,9 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FriendId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FriendId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    FriendsSince = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -269,6 +270,23 @@ namespace Infrastructure.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Email",
+                table: "AspNetUsers",
+                column: "Email");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Id",
+                table: "AspNetUsers",
+                column: "Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Id_Email",
+                table: "AspNetUsers",
+                columns: new[] { "Id", "Email" },
+                unique: true,
+                filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -281,12 +299,35 @@ namespace Infrastructure.Migrations
                 column: "FriendId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_RecieverId",
+                name: "IX_Id",
+                table: "Friends",
+                column: "Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserId",
+                table: "Friends",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SentAt",
+                table: "Messages",
+                column: "SentAt",
+                descending: new bool[0],
+                filter: "[SentAt] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecieverId",
                 table: "Messages",
                 column: "RecieverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_SenderId",
+                name: "IX_Sender_Reciever",
+                table: "Messages",
+                columns: new[] { "SenderId", "RecieverId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SenderId",
                 table: "Messages",
                 column: "SenderId");
         }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240414182059_DbInit")]
-    partial class DbInit
+    [Migration("20240415090452_update")]
+    partial class update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,15 +72,28 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FriendId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("FriendsSince")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FriendId");
+
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_Id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("Friends");
                 });
@@ -109,9 +122,19 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecieverId");
+                    b.HasIndex("RecieverId")
+                        .HasDatabaseName("IX_RecieverId");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("SenderId")
+                        .HasDatabaseName("IX_SenderId");
+
+                    b.HasIndex("SentAt")
+                        .IsDescending()
+                        .HasFilter("[SentAt] IS NOT NULL");
+
+                    b.HasIndex("SenderId", "RecieverId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Sender_Reciever");
 
                     b.ToTable("Messages");
                 });
@@ -187,6 +210,12 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .HasDatabaseName("IX_Email");
+
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_Id");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -195,7 +224,78 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("Id", "Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Id_Email")
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("FriendEntityFriendEntity", b =>
+                {
+                    b.Property<int>("FriendEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MutualFriendsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FriendEntityId", "MutualFriendsId");
+
+                    b.HasIndex("MutualFriendsId");
+
+                    b.ToTable("MutualFriends", (string)null);
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.ChannelEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ServerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_ChannelId");
+
+                    b.HasIndex("ServerId")
+                        .HasDatabaseName("IX_ServerId");
+
+                    b.ToTable("Channels");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.ServerEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("IconURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServerDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Servers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -331,6 +431,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ServerEntityUserEntity", b =>
+                {
+                    b.Property<string>("MembersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ServersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MembersId", "ServersId");
+
+                    b.HasIndex("ServersId");
+
+                    b.ToTable("ServerEntityUserEntity");
+                });
+
             modelBuilder.Entity("Chat_Alot_Library.Entities.AddressEntity", b =>
                 {
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
@@ -341,10 +456,20 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Chat_Alot_Library.Entities.FriendEntity", b =>
                 {
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", "Friend")
+                        .WithMany()
+                        .HasForeignKey("FriendId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", "User")
                         .WithMany("Friends")
-                        .HasForeignKey("FriendId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Friend");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Chat_Alot_Library.Entities.MessageEntity", b =>
@@ -364,6 +489,32 @@ namespace Infrastructure.Migrations
                     b.Navigation("MessageReviever");
 
                     b.Navigation("MessageSender");
+                });
+
+            modelBuilder.Entity("FriendEntityFriendEntity", b =>
+                {
+                    b.HasOne("Chat_Alot_Library.Entities.FriendEntity", null)
+                        .WithMany()
+                        .HasForeignKey("FriendEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chat_Alot_Library.Entities.FriendEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MutualFriendsId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.ChannelEntity", b =>
+                {
+                    b.HasOne("Infrastructure.Entities.ServerEntity", "Server")
+                        .WithMany("Channels")
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Server");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -417,6 +568,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ServerEntityUserEntity", b =>
+                {
+                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Entities.ServerEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ServersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Chat_Alot_Library.Entities.UserEntity", b =>
                 {
                     b.Navigation("Addresses");
@@ -426,6 +592,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("MessageRecievers");
 
                     b.Navigation("MessageSenders");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.ServerEntity", b =>
+                {
+                    b.Navigation("Channels");
                 });
 #pragma warning restore 612, 618
         }

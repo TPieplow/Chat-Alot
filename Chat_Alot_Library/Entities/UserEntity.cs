@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace Chat_Alot_Library.Entities;
@@ -19,4 +20,5 @@ public class UserEntity : IdentityUser
     public ICollection<MessageEntity>? MessageRecievers { get; set; }
     public ICollection<FriendEntity>? Friends { get; set;}
     public ICollection<AddressEntity>? Addresses { get; set; }
+    public ICollection<ServerEntity>? Servers { get; set;}
 }

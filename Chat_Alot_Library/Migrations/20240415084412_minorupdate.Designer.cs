@@ -4,6 +4,7 @@ using Chat_Alot_Library.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240415084412_minorupdate")]
+    partial class minorupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,7 +72,6 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FriendId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("FriendsSince")
@@ -255,21 +257,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Channels");
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.MutualFriendEntity", b =>
-                {
-                    b.Property<int>("FriendId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MutualFriendId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FriendId", "MutualFriendId");
-
-                    b.HasIndex("MutualFriendId");
-
-                    b.ToTable("MutualFriends", (string)null);
-                });
-
             modelBuilder.Entity("Infrastructure.Entities.ServerEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -293,21 +280,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Servers");
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.ServerUser", b =>
-                {
-                    b.Property<int>("ServerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ServerId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ServerUser", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -443,6 +415,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ServerEntityUserEntity", b =>
+                {
+                    b.Property<string>("MembersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ServersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MembersId", "ServersId");
+
+                    b.HasIndex("ServersId");
+
+                    b.ToTable("ServerEntityUserEntity");
+                });
+
             modelBuilder.Entity("Chat_Alot_Library.Entities.AddressEntity", b =>
                 {
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
@@ -453,20 +440,10 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Chat_Alot_Library.Entities.FriendEntity", b =>
                 {
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", "Friend")
-                        .WithMany()
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", "User")
                         .WithMany("Friends")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("FriendId");
 
                     b.Navigation("Friend");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Chat_Alot_Library.Entities.MessageEntity", b =>
@@ -497,44 +474,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Server");
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.MutualFriendEntity", b =>
-                {
-                    b.HasOne("Chat_Alot_Library.Entities.FriendEntity", "Friend")
-                        .WithMany()
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Chat_Alot_Library.Entities.FriendEntity", "MutualFriend")
-                        .WithMany()
-                        .HasForeignKey("MutualFriendId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.Navigation("Friend");
-
-                    b.Navigation("MutualFriend");
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.ServerUser", b =>
-                {
-                    b.HasOne("Infrastructure.Entities.ServerEntity", "Server")
-                        .WithMany()
-                        .HasForeignKey("ServerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Server");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -584,6 +523,21 @@ namespace Infrastructure.Migrations
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ServerEntityUserEntity", b =>
+                {
+                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Entities.ServerEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ServersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

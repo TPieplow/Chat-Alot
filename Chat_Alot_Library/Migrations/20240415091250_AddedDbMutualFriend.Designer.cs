@@ -4,6 +4,7 @@ using Chat_Alot_Library.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240415091250_AddedDbMutualFriend")]
+    partial class AddedDbMutualFriend
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,21 +298,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Servers");
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.ServerUser", b =>
-                {
-                    b.Property<int>("ServerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ServerId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ServerUser", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -443,6 +431,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ServerEntityUserEntity", b =>
+                {
+                    b.Property<string>("MembersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ServersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MembersId", "ServersId");
+
+                    b.HasIndex("ServersId");
+
+                    b.ToTable("ServerEntityUserEntity");
+                });
+
             modelBuilder.Entity("Chat_Alot_Library.Entities.AddressEntity", b =>
                 {
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
@@ -518,25 +521,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("MutualFriend");
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.ServerUser", b =>
-                {
-                    b.HasOne("Infrastructure.Entities.ServerEntity", "Server")
-                        .WithMany()
-                        .HasForeignKey("ServerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Server");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -584,6 +568,21 @@ namespace Infrastructure.Migrations
                     b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ServerEntityUserEntity", b =>
+                {
+                    b.HasOne("Chat_Alot_Library.Entities.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Entities.ServerEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ServersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

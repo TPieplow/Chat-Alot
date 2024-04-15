@@ -1,7 +1,10 @@
-﻿namespace Chat_Alot_Library.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Chat_Alot_Library.Entities;
 
 public class MessageEntity
 {
+    [Key]
     public int Id { get; set; }
     public string? Content { get; set; }
     public DateTime SentAt { get; set; }
