@@ -1,0 +1,40 @@
+﻿@model SignUpViewModel
+
+<section>
+    <form method="POST" asp-action="" asp-controller="">
+
+        <div class="section-title">
+        </div>
+        <div class="first-name">
+            <label asp-for="SignUpForm.FirstName">e</label>
+            <input asp-for="SignUpForm.FirstName" />
+            <span asp-validation-for="SignUpForm.FirstName"></span>
+        </div>
+        <div class="e-mail">
+            <label asp-for="SignUpForm.LastName"></label>
+            <span asp-validation-for="SignUpForm.LastName"></span>
+            <input asp-for="SignUpForm.LastName" />
+        </div>
+        <div class="e-mail">
+            <label asp-for="SignUpForm.Email">E-POST</label>
+            <span asp-validation-for="SignUpForm.Email"></span>
+            <input asp-for="SignUpForm.Email" />
+        </div>
+        <div class="e-mail">
+            <label asp-for="SignUpForm.Password"></label>
+            <span asp-validation-for="SignUpForm.Password"></span>
+            <input asp-for="SignUpForm.Password" />
+        </div>
+        <div class="e-mail">
+            <label asp-for="SignUpForm.ConfirmPassword"></label>
+            <span asp-validation-for="SignUpForm.ConfirmPassword"></span>
+            <input asp-for="SignUpForm.ConfirmPassword" />
+        </div>
+        <div class="checkbox" id="form-terms">
+            <label asp-for="SignUpForm.TermsAndConditions">I agree to the terms and conditions</label>
+            <span asp-validation-for="SignUpForm.TermsAndConditions"></span>
+            <input type="checkbox" asp-for="SignUpForm.TermsAndConditions" />
+        </div>
+        <button class="btn-theme" type="submit">Continue</button>
+    </form>
+</section>

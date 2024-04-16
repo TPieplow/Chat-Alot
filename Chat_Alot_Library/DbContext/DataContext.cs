@@ -101,7 +101,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .HasFilter("[SentAt] IS NOT NULL")
             .IsDescending();
 
-        // Server Entity
+       // Channel Entity
         builder.Entity<ChannelEntity>()
             .HasIndex(c => c.Id)
             .HasDatabaseName("IX_ChannelId");
@@ -116,6 +116,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .HasForeignKey(c => c.ServerId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Server Entity
         builder.Entity<ServerEntity>()
             .HasMany(s => s.Members)
             .WithMany(u => u.Servers)
