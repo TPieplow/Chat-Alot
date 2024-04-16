@@ -1,0 +1,30 @@
+﻿@page "/chat"
+@using Infrastructure.Models
+
+<h3>chat</h3>
+<div class="container">
+
+    <div class="chat-room">
+
+
+        @if (Model.Messages is not null)
+        {
+
+            <table class="chat-table">
+                @foreach (var message in Model.Messages)
+                {
+
+                    <tr>@message.SentAt</tr>
+                    <tr>@(Model.User.FirstName + "" + Model.User.LastName)</tr>
+                    <tr>@message.Content</tr>
+                }
+            </table>
+
+        }
+        <input class="chat-input" id="messageInput" placeholder="Start chatting ..." />
+    </div>
+
+</div>
+@code {
+
+}

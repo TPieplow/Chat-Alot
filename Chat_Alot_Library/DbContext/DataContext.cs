@@ -1,6 +1,5 @@
 ﻿using Chat_Alot_Library.Entities;
 using Infrastructure.Entities;
-using Infrastructure.Migrations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

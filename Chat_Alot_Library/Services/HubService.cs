@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.Components;
-using System.Data;
+using Infrastructure.Models;
+using Infrastructure.Factories;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Infrastructure.Repositories;
 
 
 namespace Infrastructure.Services
 {
-    public class HubService(NavigationManager navigation, HubConnection connection)
+    public class HubService(NavigationManager navigation, HubConnection connection, MessageRepository repository)
     {
         private NavigationManager _navigation = navigation;
         private HubConnection _connection = connection;
-        private List<string> messages = new List<string>();
-        private string messageInput;
-        
+        private readonly MessageRepository _messageRepository = repository;
 
         public async Task InitializeConnection()
         {
@@ -23,27 +24,25 @@ namespace Infrastructure.Services
                         .WithUrl(_navigation.ToAbsoluteUri("/chathub"))
                         .Build();
 
-                    IDisposable subscription = _connection.On<string, string>("RecieveMessage", (user, message) =>
+                    _connection.On<string, string>("RecieveMessage", (user, message) =>
                     {
                         var encodedMessage = $"{user}: {message}";
-                        messages.Add(encodedMessage);
-                        
                     });
 
-                    subscription.Dispose();
                     await _connection.StartAsync();
                 }
             }
-            catch (Exception) {  }
+            catch (Exception) { }
         }
 
-        public async Task Send(string userInput) => await _connection.SendAsync("SendMessage", userInput ,messageInput);
+        public async Task Send(string userInput) => await _connection.SendAsync("SendMessage", userInput);
 
-        public async Task SendMessage(string userInput, string user)
+        public async Task SendMessage(MessageModel model)
         {
-            if (!string.IsNullOrEmpty(userInput))
+            var messageEntity = MessageFactory.Create(model);
+            if (messageEntity is not null)
             {
-                await _connection.SendAsync("SendMessage", userInput, user);
+                await _messageRepository.CreateOneAsync(messageEntity);
             }
         }
     }
