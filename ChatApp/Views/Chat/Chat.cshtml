@@ -1,7 +1,8 @@
-﻿@model ChatViewModel
+﻿@using Chat_Alot.Client
 @inject NavigationManager navigationManager
 
-<section>
 
+<section>
+    <component type="typeof(Chat)" render-mode="WebAssemblyPrerendered" />
 </section>
 

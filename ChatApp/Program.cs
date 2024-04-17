@@ -10,14 +10,22 @@ builder.Services.RegisterServices(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseExceptionHandler("/Home/Error");
-app.MapHub<ChatHub>("/chathub");
-app.UseHsts();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+else
+{
+    app.MapHub<ChatHub>("/chathub");
+    app.UseWebAssemblyDebugging();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+app.UseBlazorFrameworkFiles();
 app.UseAuthentication();
 
 

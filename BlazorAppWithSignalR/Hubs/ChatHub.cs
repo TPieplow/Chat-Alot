@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Infrastructure.Hubs;
+namespace BlazorAppWithSignalR.Hubs;
 
 public class ChatHub : Hub
 {
